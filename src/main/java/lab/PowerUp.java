@@ -10,45 +10,28 @@ import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
 import javafx.scene.canvas.Canvas;
 
-
-public class Bullet implements HasCollision {
+public class PowerUp implements HasCollision{
     private GameScene gameScene;
     private Point2D position;
-    private GraphicsContext gc;
-    private Canvas canvas;
-    double width = 10;
-    double height = 15;
-    double speed = 400;
+    double width = 25;
+    double height = 25;
 
-
-    public Bullet(GameScene gameScene, Point2D playerPosition) {
-        this.position = new Point2D(playerPosition.getX(), playerPosition.getY() - 20);
-    }
-
-    public void moveUp(double delay) {
-        position = position.add(0, -speed * delay);
+    PowerUp(GameScene gameScene, Point2D position) {
+        this.gameScene = gameScene;
+        this.position = position;
     }
 
     public void draw(GraphicsContext gc) {
         gc.save();
-        gc.setFill(Color.GREEN);
-        gc.setStroke(Color.GREEN);
+        gc.setFill(Color.ORANGE);
+        gc.setStroke(Color.ORANGE);
         gc.fillRect(position.getX() - width / 2, position.getY() - height / 2, width, height);
         gc.restore();
     }
 
-    public void simulate(Double delay) {
-        moveUp(delay);
-    }
-
-    public Point2D getPosition() {
-        return position;
-    }
-
-    public Rectangle2D getHitbox() {
+    public Rectangle2D getHitbox(){
         return new Rectangle2D(
             position.getX() - width / 2, position.getY() - height / 2, width, height
         );
     }
-
 }

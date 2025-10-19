@@ -1,40 +1,50 @@
 package lab;
 
-import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
-import javafx.scene.transform.Affine;
-import javafx.scene.transform.Rotate;
-import javafx.scene.canvas.Canvas;
 
-public class Player {
+public class Player implements HasCollision{
     private GameScene gameScene;
     private Point2D position;
     private GraphicsContext gc;
     private Canvas canvas;
     private Bullet bullet;
 
-    double width = 20;
-    double height = 20;
+    private static Image image;
+
+    double width = 60;
+    double height = 60;
+
+    private double bulletCooldown = 0.15; // seconds between shots
+    private double lastShotTimer = 0;
 
     public Player(GameScene gameScene, Point2D position){
         this.gameScene = gameScene;
         this.position = position;
+        image = getImg();
+    }
+
+    private static Image getImg(){
+        if (image == null) {
+            image = new Image(Player.class.getResourceAsStream("player_plane.png"));
+        }
+        return  image;
     }
 
     public void draw(GraphicsContext gc){
         gc.save();
-        gc.setFill(Color.BLUE);
-        gc.setStroke(Color.BLUE);
-        gc.fillRect(position.getX() - width / 2,position.getY() - height / 2, width, height);
+        gc.drawImage(image, position.getX() - width / 2, position.getY() - height / 2, width, height);
         gc.restore();
     }
 
-    double movementSpeed = 150;
+    double movementSpeed = 200;
+
+    public void simulate(double delay){
+        lastShotTimer += delay;
+    }
 
     public void moveUp(double deltaTime){
         position = position.add(0, -movementSpeed * deltaTime);
@@ -53,8 +63,11 @@ public class Player {
     }
 
     public void shoot(){
-        Bullet bullet = new Bullet(gameScene, position); // create a bullet at player pos
-        gameScene.addBullet(bullet);
+        if (lastShotTimer >= bulletCooldown) {
+            Bullet bullet = new Bullet(gameScene, position);
+            gameScene.addBullet(bullet);
+            lastShotTimer = 0; // reset timer
+        }
     }
 
     public Point2D getPosition() {

@@ -17,11 +17,11 @@ public class GameScene {
 
     private Dimension2D size;
     private Player player;
-    private Enemy enemy;
+    private PowerUp powerUp;
+    private Background background;
 
     private List<Bullet> bullets = new ArrayList<>();
-
-    private List<Enemy> enemies = new ArrayList<>();
+    private List<EnemyEntity> enemies = new ArrayList<>();
 
     private Set<KeyCode> keysPressed;
 
@@ -30,93 +30,114 @@ public class GameScene {
         this.keysPressed = keysPressed;
         double centerX = width / 2;
         double centerY = height / 2;
-        int enemyCount = 10;
+        int enemyCount = 50;
+        background = new Background(this);
         player = new Player(this, new Point2D(centerX, centerY));
-        for(int i = 0; i < enemyCount; i++){
-            enemies.add(
-                new Enemy(this,
-                new Point2D(RANDOM.nextDouble(0, size.getWidth()),
-                RANDOM.nextDouble(0,size.getHeight()))
-            )
-            );
+        powerUp = new PowerUp(this, new Point2D(300, 300));
+        for (int i = 0; i < enemyCount; i++) {
+            if (RANDOM.nextBoolean()) {
+                enemies.add(new SmallFighter(this, randomPosition()));
+            }
+            else {
+                enemies.add(new MediumBomber(this, randomPosition()));
+            }
         }
     }
+
+    public Point2D randomPosition(){
+        return new Point2D(RANDOM.nextDouble(0, size.getWidth()),
+            RANDOM.nextDouble(0, size.getHeight()));
+    }
+
+    public Dimension2D getSize() {
+        return size;
+    }
+
     public void draw(GraphicsContext gc) {
         gc.save();
+        background.draw(gc);
+        powerUp.draw(gc);
         player.draw(gc);
 
-        for(Enemy enemy : enemies){
+        for (EnemyEntity enemy : enemies) {
             enemy.draw(gc);
         }
-        for(Bullet bullet : bullets){
+        for (Bullet bullet : bullets) {
             bullet.draw(gc);
         }
 
-
         gc.restore();
     }
-    public void simulate(double delay){
-        if (keysPressed.contains(KeyCode.W)){
+
+    public void simulate(double delay) {
+        background.simulate(delay);
+        player.simulate(delay);
+        if (keysPressed.contains(KeyCode.W)) {
             player.moveUp(delay);
         }
-        if (keysPressed.contains(KeyCode.S)){
+        if (keysPressed.contains(KeyCode.S)) {
             player.moveDown(delay);
         }
-        if (keysPressed.contains(KeyCode.A)){
+        if (keysPressed.contains(KeyCode.A)) {
             player.moveLeft(delay);
         }
-        if (keysPressed.contains(KeyCode.D)){
+        if (keysPressed.contains(KeyCode.D)) {
             player.moveRight(delay);
         }
-        if (keysPressed.contains(KeyCode.J)){
+        if (keysPressed.contains(KeyCode.J)) {
             player.shoot();
+        }
+
+        if (player.getPosition().getX() < 0 + player.width / 2) {
+            player.setPosition(new Point2D(0 + player.width / 2, player.getPosition().getY()));
+        }
+
+        if (player.getPosition().getX() > size.getWidth() - player.width / 2) {
+            player.setPosition(new Point2D(size.getWidth() - player.width / 2, player.getPosition().getY()));
+        }
+
+        if (player.getPosition().getY() < 0 + player.height / 2) {
+            player.setPosition(new Point2D(player.getPosition().getX(), 0 + player.height / 2));
+        }
+
+        if (player.getPosition().getY() > size.getHeight() - player.height / 2) {
+            player.setPosition(new Point2D(player.getPosition().getX(), size.getHeight() - player.height / 2));
+        }
+
+        if (player.getHitbox().intersects(powerUp.getHitbox())) {
+            System.out.println("player collected powerup");
         }
 
         Iterator<Bullet> bulletIterator = bullets.iterator();
         while (bulletIterator.hasNext()) {
-            Bullet bullet = (Bullet)bulletIterator.next();
+            Bullet bullet = bulletIterator.next();
             bullet.simulate(delay);
-            if(bullet.getPosition().getY() < 0){
+            if (bullet.getPosition().getY() < 0) {
                 bulletIterator.remove();
-                System.out.println("bullet removed");
+                System.out.println("bullet removed - out of bounds");
             }
         }
+        Iterator<EnemyEntity> enemyIterator = enemies.iterator();
+        while (enemyIterator.hasNext()) {
+            EnemyEntity enemy = enemyIterator.next();
+            enemy.simulate(delay);
 
-        if(player.getPosition().getX() < 0 + player.width / 2){
-            player.setPosition(new Point2D(0 + player.width / 2, player.getPosition().getY()));
-        }
-
-        if(player.getPosition().getX() > size.getWidth() - player.width / 2){
-            player.setPosition(new Point2D(size.getWidth() - player.width / 2, player.getPosition().getY()));
-        }
-
-        if(player.getPosition().getY() < 0 + player.height / 2){
-            player.setPosition(new Point2D(player.getPosition().getX(), 0 + player.height / 2));
-        }
-
-        if(player.getPosition().getY() > size.getHeight() - player.height / 2){
-            player.setPosition(new Point2D(player.getPosition().getX(), size.getHeight() - player.height / 2));
-        }
-
-
-        for(Enemy enemy : enemies){
-            if(player.getHitbox().intersects(enemy.getHitbox())){
-                System.out.println("enemy hit player - game over");
+            if (enemy.getHitbox().intersects(player.getHitbox())) {
+                System.out.println("enemy hit player");
             }
-        }
 
-        for(Bullet bullet : bullets){
-            for(Enemy enemy : enemies){
-                if(bullet.getHitbox().intersects(enemy.getHitbox())){
+            for (Bullet bullet : bullets) {
+                if (bullet.getHitbox().intersects(enemy.getHitbox())) {
                     System.out.println("bullet hit enemy");
-                    enemy.setColor();
+                    bullets.remove(bullet);
+                    enemyIterator.remove();
+                    break;
                 }
             }
         }
-
     }
 
-    public void addBullet(Bullet bullet){
+    public void addBullet(Bullet bullet) {
         bullets.add(bullet);
     }
 

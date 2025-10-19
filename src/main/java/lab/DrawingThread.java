@@ -1,4 +1,5 @@
 package lab;
+
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -8,6 +9,7 @@ import javafx.scene.text.Font;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,7 +24,7 @@ public class DrawingThread extends AnimationTimer {
     public DrawingThread(Canvas canvas, Set<KeyCode> keysPressed) {
         this.canvas = canvas;
         this.gc = canvas.getGraphicsContext2D();
-        gameScene = new GameScene(canvas.getWidth(),  canvas.getHeight(), keysPressed);
+        gameScene = new GameScene(canvas.getWidth(), canvas.getHeight(), keysPressed);
 
     }
 

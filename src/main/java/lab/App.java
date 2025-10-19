@@ -11,6 +11,7 @@ import javafx.scene.input.KeyCode;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import javafx.stage.WindowEvent;
 import javafx.scene.input.KeyCode;
 
@@ -24,7 +25,7 @@ public class App extends Application {
     private AnimationTimer timer;
 
 
-    private int w = 1000;
+    private int w = 768;
     private int h = 700;
 
     @Override
