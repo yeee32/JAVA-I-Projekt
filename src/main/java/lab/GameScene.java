@@ -36,17 +36,16 @@ public class GameScene {
         powerUp = new PowerUp(this, new Point2D(300, 300));
         for (int i = 0; i < enemyCount; i++) {
             if (RANDOM.nextBoolean()) {
-                enemies.add(new SmallFighter(this, randomPosition()));
+                enemies.add(new SmallFighter(this, randomEnemySpawnPosition()));
             }
             else {
-                enemies.add(new MediumBomber(this, randomPosition()));
+                enemies.add(new MediumBomber(this, randomEnemySpawnPosition()));
             }
         }
     }
 
-    public Point2D randomPosition(){
-        return new Point2D(RANDOM.nextDouble(0, size.getWidth()),
-            RANDOM.nextDouble(0, size.getHeight()));
+    public Point2D randomEnemySpawnPosition(){
+        return new Point2D(RANDOM.nextDouble(10, size.getWidth() - 10), -10);
     }
 
     public Dimension2D getSize() {
@@ -87,7 +86,7 @@ public class GameScene {
         if (keysPressed.contains(KeyCode.J)) {
             player.shoot();
         }
-
+        // keeps player inside bounds
         if (player.getPosition().getX() < 0 + player.width / 2) {
             player.setPosition(new Point2D(0 + player.width / 2, player.getPosition().getY()));
         }
@@ -104,7 +103,7 @@ public class GameScene {
             player.setPosition(new Point2D(player.getPosition().getX(), size.getHeight() - player.height / 2));
         }
 
-        if (player.getHitbox().intersects(powerUp.getHitbox())) {
+        if(player.collidesWith(powerUp.getHitbox())){
             System.out.println("player collected powerup");
         }
 
@@ -122,12 +121,12 @@ public class GameScene {
             EnemyEntity enemy = enemyIterator.next();
             enemy.simulate(delay);
 
-            if (enemy.getHitbox().intersects(player.getHitbox())) {
+            if (enemy.collidesWith(player.getHitbox())) {
                 System.out.println("enemy hit player");
             }
 
             for (Bullet bullet : bullets) {
-                if (bullet.getHitbox().intersects(enemy.getHitbox())) {
+                if (bullet.collidesWith(enemy.getHitbox())) {
                     System.out.println("bullet hit enemy");
                     bullets.remove(bullet);
                     enemyIterator.remove();

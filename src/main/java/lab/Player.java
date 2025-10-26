@@ -40,7 +40,7 @@ public class Player implements HasCollision{
         gc.restore();
     }
 
-    double movementSpeed = 200;
+    double movementSpeed = 300;
 
     public void simulate(double delay){
         lastShotTimer += delay;
