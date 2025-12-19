@@ -2,53 +2,39 @@ package lab;
 
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
-import javafx.scene.transform.Affine;
-import javafx.scene.transform.Rotate;
-import javafx.scene.canvas.Canvas;
 
+import java.awt.*;
 
-public class Bullet implements HasCollision {
-    private GameScene gameScene;
-    private Point2D position;
-    private GraphicsContext gc;
-    private Canvas canvas;
-    double width = 10;
-    double height = 15;
-    double speed = 400;
+public abstract class Bullet implements HasCollision {
+    protected Point2D position;
+    protected Point2D velocity;
+    protected double width = 10;
+    protected double height = 15;
+    protected static Image image;
 
-
-    public Bullet(GameScene gameScene, Point2D playerPosition) {
-        this.position = new Point2D(playerPosition.getX(), playerPosition.getY() - 20);
+    public Bullet(Point2D position, Point2D velocity) {
+        this.position = position;
+        this.velocity = velocity;
     }
 
-    public void moveUp(double delay) {
-        position = position.add(0, -speed * delay);
-    }
-
-    public void draw(GraphicsContext gc) {
-        gc.save();
-        gc.setFill(Color.GREEN);
-        gc.setStroke(Color.GREEN);
-        gc.fillRect(position.getX() - width / 2, position.getY() - height / 2, width, height);
-        gc.restore();
-    }
-
-    public void simulate(Double delay) {
-        moveUp(delay);
-    }
-
-    public Point2D getPosition() {
-        return position;
+    public void simulate(double deltaTime) {
+        position = position.add(velocity.multiply(deltaTime));
     }
 
     public Rectangle2D getHitbox() {
         return new Rectangle2D(
-            position.getX() - width / 2, position.getY() - height / 2, width, height
+            position.getX() - width / 2,
+            position.getY() - height / 2,
+            width,
+            height
         );
     }
 
+    public abstract void draw(GraphicsContext gc);
+
+    public Point2D getPosition() {
+        return position;
+    }
 }

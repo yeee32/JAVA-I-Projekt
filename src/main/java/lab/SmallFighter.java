@@ -7,24 +7,24 @@ import java.util.Random;
 
 
 public class SmallFighter extends EnemyEntity implements HasCollision{
-    private static final Random RANDOM = new Random();
+    private double zigzagAmplitude = 80;
+    private double zigzagSpeed = 2; // cycles/sec
+    private double time = 0;
 
     public SmallFighter(GameScene gameScene, Point2D position) {
-        super(gameScene, position);
-        this.width = 25;
-        this.height = 25;
-        this.speed = RANDOM.nextDouble(300,375);
-        setColor(Color.VIOLET);
+        super(gameScene, position, 25, 25);
+        this.speedY = 300;
+        this.c = Color.VIOLET;
     }
 
-    private double randX = RANDOM.nextDouble(-100,100);
-    // random limit when the small fighter turns around
-    private double lim = gameScene.getSize().getWidth() * RANDOM.nextDouble(0.6, 0.9);
+    @Override
+    public void simulate(double deltaTime) {
+        time += deltaTime;
+        double offsetX = Math.sin(time * zigzagSpeed * 2 * Math.PI) * zigzagAmplitude * deltaTime;
+        position = position.add(offsetX, speedY * deltaTime);
 
-    public void simulate(double delay){
-        position = position.add(randX * delay, speed * delay);
-        if (position.getY() > lim) {
-            speed = -speed;
+        if (position.getY() > gameScene.getSize().getHeight() + height) {
+            alive = false;
         }
     }
 }

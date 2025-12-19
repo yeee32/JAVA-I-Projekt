@@ -29,7 +29,8 @@ public class PowerUp implements HasCollision{
         gc.restore();
     }
 
-    public Rectangle2D getHitbox(){
+
+    public Rectangle2D getHitbox() {
         return new Rectangle2D(
             position.getX() - width / 2, position.getY() - height / 2, width, height
         );

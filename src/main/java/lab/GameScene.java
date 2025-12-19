@@ -6,6 +6,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -23,7 +24,15 @@ public class GameScene {
     private List<Bullet> bullets = new ArrayList<>();
     private List<EnemyEntity> enemies = new ArrayList<>();
 
+    private List<PowerUp> powerUps = new ArrayList<>();
+
     private Set<KeyCode> keysPressed;
+
+    private Comparator<EnemyEntity> comparator;
+
+    private Score scoreObj;
+    private PlayerLives livesObj;
+    private final int pointsAmmount = 100;
 
     public GameScene(double width, double height, Set<KeyCode> keysPressed) {
         size = new Dimension2D(width, height);
@@ -33,7 +42,23 @@ public class GameScene {
         int enemyCount = 50;
         background = new Background(this);
         player = new Player(this, new Point2D(centerX, centerY));
-        powerUp = new PowerUp(this, new Point2D(300, 300));
+
+        spawnPowerUp(new Point2D(300,300));
+        scoreObj = new Score(this);
+        livesObj = new PlayerLives(this);
+        comparator = new Comparator<EnemyEntity>() {
+            @Override
+            public int compare(EnemyEntity o1, EnemyEntity o2) {
+                if (o1 instanceof SmallFighter && o2 instanceof MediumBomber) {
+                    return 1;
+                }
+                if (o1 instanceof MediumBomber && o2 instanceof SmallFighter) {
+                    return -1;
+                }
+                return 0;
+            }
+        };
+
         for (int i = 0; i < enemyCount; i++) {
             if (RANDOM.nextBoolean()) {
                 enemies.add(new SmallFighter(this, randomEnemySpawnPosition()));
@@ -42,7 +67,11 @@ public class GameScene {
                 enemies.add(new MediumBomber(this, randomEnemySpawnPosition()));
             }
         }
+        enemies.sort(comparator);
     }
+
+
+
 
     public Point2D randomEnemySpawnPosition(){
         return new Point2D(RANDOM.nextDouble(10, size.getWidth() - 10), -10);
@@ -55,8 +84,7 @@ public class GameScene {
     public void draw(GraphicsContext gc) {
         gc.save();
         background.draw(gc);
-        powerUp.draw(gc);
-        player.draw(gc);
+
 
         for (EnemyEntity enemy : enemies) {
             enemy.draw(gc);
@@ -65,6 +93,16 @@ public class GameScene {
             bullet.draw(gc);
         }
 
+        for (PowerUp pu : powerUps) {
+            pu.draw(gc);
+        }
+        player.draw(gc);
+
+        gc.setFill(javafx.scene.paint.Color.WHITE);
+        gc.setFont(javafx.scene.text.Font.font("Arial", 24));
+        gc.fillText("Score: " + scoreObj.getScore(), 20, 30);
+
+        gc.fillText("Lives: " + livesObj.getLives(), size.getWidth() - 120, 30);
         gc.restore();
     }
 
@@ -103,41 +141,73 @@ public class GameScene {
             player.setPosition(new Point2D(player.getPosition().getX(), size.getHeight() - player.height / 2));
         }
 
-        if(player.collidesWith(powerUp.getHitbox())){
-            System.out.println("player collected powerup");
-        }
 
         Iterator<Bullet> bulletIterator = bullets.iterator();
         while (bulletIterator.hasNext()) {
             Bullet bullet = bulletIterator.next();
             bullet.simulate(delay);
-            if (bullet.getPosition().getY() < 0) {
+
+            // Remove bullets if off-screen
+            if (bullet.getPosition().getY() < -50 || bullet.getPosition().getY() > size.getHeight() + 50) {
                 bulletIterator.remove();
-                System.out.println("bullet removed - out of bounds");
+                continue;
+            }
+
+            // PlayerBullet hits enemies
+            if (bullet instanceof PlayerBullet) {
+                Iterator<EnemyEntity> enemyIterator = enemies.iterator();
+                while (enemyIterator.hasNext()) {
+                    EnemyEntity enemy = enemyIterator.next();
+                    if (bullet.getHitbox().intersects(enemy.getHitbox())) {
+                        enemyIterator.remove();
+                        bulletIterator.remove();
+                        scoreObj.addPoints(pointsAmmount);
+                        break;
+                    }
+                }
+            }
+
+            // EnemyBullet hits player
+            if (bullet instanceof EnemyBullet) {
+                if (bullet.getHitbox().intersects(player.getHitbox())) {
+                    bulletIterator.remove();
+                    livesObj.loseLife();
+                }
             }
         }
+
+        Iterator<PowerUp> powerUpIterator = powerUps.iterator();
+        while (powerUpIterator.hasNext()) {
+            PowerUp powerUp = powerUpIterator.next();
+            if (player.collidesWith(powerUp.getHitbox())) {
+                player.activatePowerUp(powerUp);
+                powerUpIterator.remove();
+            }
+        }
+
         Iterator<EnemyEntity> enemyIterator = enemies.iterator();
         while (enemyIterator.hasNext()) {
             EnemyEntity enemy = enemyIterator.next();
             enemy.simulate(delay);
-
             if (enemy.collidesWith(player.getHitbox())) {
-                System.out.println("enemy hit player");
+                //System.out.println("enemy hit player");
+                livesObj.loseLife();
             }
 
-            for (Bullet bullet : bullets) {
-                if (bullet.collidesWith(enemy.getHitbox())) {
-                    System.out.println("bullet hit enemy");
-                    bullets.remove(bullet);
-                    enemyIterator.remove();
-                    break;
-                }
+            if (enemy.getPosition().getY() > size.getHeight() + 50) {
+                enemyIterator.remove();
             }
         }
     }
-
     public void addBullet(Bullet bullet) {
         bullets.add(bullet);
     }
 
+    public void spawnPowerUp(Point2D position) {
+        powerUps.add(new PowerUp(this, position));
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
 }

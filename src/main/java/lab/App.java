@@ -2,7 +2,10 @@ package lab;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.stage.Stage;
@@ -17,6 +20,8 @@ import javafx.scene.input.KeyCode;
 
 public class App extends Application {
 
+    private Stage stage;
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -29,7 +34,23 @@ public class App extends Application {
     private int h = 700;
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage stage) throws Exception {
+        this.stage = stage;
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("mainMenu.fxml"));
+        Parent root = loader.load();
+
+        MainMenuController controller = loader.getController();
+        controller.setMainApp(this);
+
+
+        Scene scene = new Scene(root, w, h);
+        stage.setScene(scene);
+        stage.setTitle("Main Menu");
+        stage.show();
+    }
+
+    public void startGame(Stage primaryStage) {
         try {
             //Construct a main window with a canvas.
             Group root = new Group();
@@ -59,6 +80,14 @@ public class App extends Application {
     public void stop() throws Exception {
         timer.stop();
         super.stop();
+    }
+
+    public void quitGame() {
+        if (timer != null) {
+            timer.stop();
+        }
+        Platform.exit();
+        System.exit(0);
     }
 
     private void exitProgram(WindowEvent evt) {
