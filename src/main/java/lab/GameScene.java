@@ -30,9 +30,13 @@ public class GameScene {
 
     private Comparator<EnemyEntity> comparator;
 
+    private EnemySpawner infEnemySpawner;
+
+
     private Score scoreObj;
     private PlayerLives livesObj;
     private final int pointsAmmount = 100;
+    private final int padding = 50;
 
     public GameScene(double width, double height, Set<KeyCode> keysPressed) {
         size = new Dimension2D(width, height);
@@ -42,8 +46,10 @@ public class GameScene {
         int enemyCount = 50;
         background = new Background(this);
         player = new Player(this, new Point2D(centerX, centerY));
+        infEnemySpawner = new EnemySpawner(this);
 
         spawnPowerUp(new Point2D(300,300));
+        spawnPowerUp(new Point2D(500,500));
         scoreObj = new Score(this);
         livesObj = new PlayerLives(this);
         comparator = new Comparator<EnemyEntity>() {
@@ -59,19 +65,12 @@ public class GameScene {
             }
         };
 
-        for (int i = 0; i < enemyCount; i++) {
-            if (RANDOM.nextBoolean()) {
-                enemies.add(new SmallFighter(this, randomEnemySpawnPosition()));
-            }
-            else {
-                enemies.add(new MediumBomber(this, randomEnemySpawnPosition()));
-            }
-        }
-        enemies.sort(comparator);
     }
 
-
-
+    public void addEnemy(EnemyEntity enemy) {
+        enemies.add(enemy);
+        enemies.sort(comparator);
+    }
 
     public Point2D randomEnemySpawnPosition(){
         return new Point2D(RANDOM.nextDouble(10, size.getWidth() - 10), -10);
@@ -81,6 +80,7 @@ public class GameScene {
         return size;
     }
 
+    // draws everything
     public void draw(GraphicsContext gc) {
         gc.save();
         background.draw(gc);
@@ -107,8 +107,10 @@ public class GameScene {
     }
 
     public void simulate(double delay) {
+        infEnemySpawner.update(delay);
         background.simulate(delay);
         player.simulate(delay);
+
         if (keysPressed.contains(KeyCode.W)) {
             player.moveUp(delay);
         }
@@ -124,6 +126,11 @@ public class GameScene {
         if (keysPressed.contains(KeyCode.J)) {
             player.shoot();
         }
+
+        if (keysPressed.contains(KeyCode.K)) {
+            player.dodge();
+        }
+
         // keeps player inside bounds
         if (player.getPosition().getX() < 0 + player.width / 2) {
             player.setPosition(new Point2D(0 + player.width / 2, player.getPosition().getY()));
@@ -169,9 +176,10 @@ public class GameScene {
 
             // EnemyBullet hits player
             if (bullet instanceof EnemyBullet) {
-                if (bullet.getHitbox().intersects(player.getHitbox())) {
+                if (bullet.getHitbox().intersects(player.getHitbox()) && !player.isInvincible()) {
                     bulletIterator.remove();
                     livesObj.loseLife();
+                    break;
                 }
             }
         }
@@ -189,13 +197,14 @@ public class GameScene {
         while (enemyIterator.hasNext()) {
             EnemyEntity enemy = enemyIterator.next();
             enemy.simulate(delay);
-            if (enemy.collidesWith(player.getHitbox())) {
+            if (enemy.collidesWith(player.getHitbox()) && !player.isInvincible()) {
                 //System.out.println("enemy hit player");
                 livesObj.loseLife();
             }
 
-            if (enemy.getPosition().getY() > size.getHeight() + 50) {
+            if (enemy.getPosition().getY() < -padding * 3 || enemy.getPosition().getY() > size.getHeight() + padding || enemy.getPosition().getX() < -padding || enemy.getPosition().getX() > size.getWidth() + padding) {
                 enemyIterator.remove();
+                System.out.println("Enemy removed for going off-screen");
             }
         }
     }
@@ -205,6 +214,10 @@ public class GameScene {
 
     public void spawnPowerUp(Point2D position) {
         powerUps.add(new PowerUp(this, position));
+    }
+
+    public void addScore(int points) {
+        scoreObj.addPoints(points);
     }
 
     public Player getPlayer() {

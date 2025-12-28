@@ -5,12 +5,11 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
-import java.awt.*;
 
 public abstract class Bullet implements HasCollision {
     protected Point2D position;
     protected Point2D velocity;
-    protected double width = 10;
+    protected double width = 15;
     protected double height = 15;
     protected static Image image;
 

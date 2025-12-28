@@ -1,16 +1,34 @@
 package lab;
 
 import javafx.geometry.Point2D;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 public class MediumBomber extends EnemyEntity implements HasCollision {
     private double shootTimer = 0;
-    private double shootCooldown = 2; // seconds
+    private double shootCooldown = 1.5; // seconds
+
+    double width = 70;
+    double height = 70;
+
+    private static Image img;
+
+//    static {
+//        img = new Image(SmallFighter.class.getResourceAsStream("blue_down.png"));
+//    }
 
     public MediumBomber(GameScene gameScene, Point2D position) {
         super(gameScene, position, 35, 35);
-        this.speedY = 150;
-        this.c = Color.PURPLE;
+        this.speedY = 180;
+        img = getImg();
+    }
+
+    Image getImg(){
+        if (img == null) {
+            img = new Image(SmallFighter.class.getResourceAsStream("blue_down.png"));
+        }
+        return img;
     }
 
     @Override
@@ -23,9 +41,6 @@ public class MediumBomber extends EnemyEntity implements HasCollision {
             shootAtPlayer();
         }
 
-        if (position.getY() > gameScene.getSize().getHeight() + height) {
-            alive = false;
-        }
     }
 
     private void shootAtPlayer() {
@@ -33,4 +48,11 @@ public class MediumBomber extends EnemyEntity implements HasCollision {
         Point2D direction = playerPos.subtract(position).normalize().multiply(250);
         gameScene.addBullet(new EnemyBullet(position, direction));
     }
+
+    public void draw(GraphicsContext gc){
+        gc.save();
+        gc.drawImage(img, position.getX() - width / 2, position.getY() - height / 2, width, height);
+        gc.restore();
+    }
+
 }

@@ -16,6 +16,7 @@ public class PowerUp implements HasCollision{
     double width = 25;
     double height = 25;
 
+
     PowerUp(GameScene gameScene, Point2D position) {
         this.gameScene = gameScene;
         this.position = position;

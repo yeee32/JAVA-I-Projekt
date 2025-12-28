@@ -20,9 +20,9 @@ public abstract class EnemyEntity implements HasCollision{
     protected double speedY; // vertical
     protected double speedX; // horizontal
 
-
-    protected boolean alive = true;
     protected Color c;
+
+    protected boolean lives = false;
 
     protected EnemyEntity(GameScene gameScene, Point2D position, int w, int h) {
         this.gameScene = gameScene;
@@ -50,5 +50,9 @@ public abstract class EnemyEntity implements HasCollision{
 
     public Point2D getPosition() {
         return position;
+    }
+
+    public boolean isLiving() {
+        return lives;
     }
 }

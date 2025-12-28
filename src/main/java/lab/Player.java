@@ -25,21 +25,38 @@ public class Player implements HasCollision{
     private double bulletCooldown = 0.15; // seconds between shots
     private double lastShotTimer = 0;
 
+    private boolean invincible = false;
+    private double invincibleDuration = 3; // seconds
+    private double invincibleTimer = 0;
+
+    private double invincibleCooldown = 4;
+    private double invincibleCooldownTimer = 0;
+
+    private static Image defaultImage;
+    private static Image invincibleImage;
+
     public Player(GameScene gameScene, Point2D position){
         this.gameScene = gameScene;
         this.position = position;
-        image = getImg();
+        loadImages();
     }
 
-    private static Image getImg(){
-        if (image == null) {
-            image = new Image(Player.class.getResourceAsStream("player_plane.png"));
+    private static void loadImages() {
+        if (defaultImage == null) {
+            defaultImage = new Image(
+                Player.class.getResourceAsStream("player_plane.png")
+            );
+            invincibleImage = new Image(
+                Player.class.getResourceAsStream("player_plane_shielded.png")
+            );
         }
-        return  image;
     }
 
     public void draw(GraphicsContext gc){
         gc.save();
+
+        Image image = invincible ? invincibleImage : defaultImage;
+
         gc.drawImage(image, position.getX() - width / 2, position.getY() - height / 2, width, height);
         gc.restore();
     }
@@ -48,6 +65,16 @@ public class Player implements HasCollision{
 
     public void simulate(double delay){
         lastShotTimer += delay;
+        if (invincible) {
+            invincibleTimer += delay;
+            if (invincibleTimer >= invincibleDuration) {
+                invincible = false;
+                invincibleTimer = 0;
+            }
+        }
+        else {
+            invincibleCooldownTimer += delay;
+        }
     }
 
     public void moveUp(double deltaTime){
@@ -66,10 +93,16 @@ public class Player implements HasCollision{
         position = position.add(movementSpeed * deltaTime, 0);
     }
 
+    public void dodge(){
+        if (!invincible && invincibleCooldownTimer >= invincibleCooldown) {
+            invincible = true;
+            invincibleCooldownTimer = 0;
+            System.out.println("Player dodged");
+        }
+    }
+
     public void shoot(){
         if (lastShotTimer >= bulletCooldown) {
-            PlayerBullet bullet = new PlayerBullet(position, velocity);
-
             Point2D playerCenter = position.add(0, -30);
 
             if(powUpActive) {
@@ -100,13 +133,23 @@ public class Player implements HasCollision{
     }
 
     public void activatePowerUp(PowerUp powerUp){
-        System.out.println("PowerUp activated");
-        powUpActive = true;
+        if(!powUpActive){
+            System.out.println("PowerUp activated");
+            powUpActive = true;
+        }
+        else{
+            System.out.println("PowerUp already active");
+            gameScene.addScore(1000);
+        }
     }
 
     public Rectangle2D getHitbox(){
         return new Rectangle2D(
             position.getX() - width / 2, position.getY() - height / 2, width, height
         );
+    }
+
+    public boolean isInvincible() {
+        return invincible;
     }
 }

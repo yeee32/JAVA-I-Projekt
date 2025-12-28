@@ -29,7 +29,6 @@ public class App extends Application {
     private Canvas canvas;
     private AnimationTimer timer;
 
-
     private int w = 768;
     private int h = 700;
 
