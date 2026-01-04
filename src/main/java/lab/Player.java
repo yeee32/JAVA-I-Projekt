@@ -119,6 +119,16 @@ public class Player implements HasCollision{
         }
     }
 
+    public void takeDamage() {
+        if (invincible) {
+            return;
+        }
+
+        invincible = true;
+        invincibleTimer = 0;
+        invincibleCooldownTimer = 0;
+    }
+
     public Point2D getPosition() {
         return position;
     }
@@ -140,6 +150,13 @@ public class Player implements HasCollision{
         else{
             System.out.println("PowerUp already active");
             gameScene.addScore(1000);
+        }
+    }
+
+    public void disablePowerUp(PowerUp powerUp){
+        if(powUpActive){
+            System.out.println("PowerUp disabled");
+            powUpActive = false;
         }
     }
 

@@ -1,20 +1,10 @@
 package lab;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
 public class MainMenuController {
-
-    @FXML
-    private ResourceBundle resources;
-
-    @FXML
-    private URL location;
 
     @FXML
     private Button start_button;
@@ -34,9 +24,8 @@ public class MainMenuController {
     private void startGame() {
         try {
             // start game
-            App game = new App();
             Stage stage = (Stage) start_button.getScene().getWindow();
-            game.startGame(stage);
+            app.startGame(stage);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -46,6 +35,11 @@ public class MainMenuController {
     @FXML
     private void quitGame() {
         app.quitGame();
+    }
+
+    @FXML
+    private void scoreBoard() {
+        app.switchToScoreboard();
     }
 
     public void setMainApp(App app) {

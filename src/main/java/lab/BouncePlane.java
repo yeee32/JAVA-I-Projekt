@@ -12,7 +12,7 @@ public class BouncePlane extends EnemyEntity implements HasCollision {
     private double speed;
 
     private double shootTimer = 0;
-    private double shootCooldown = 1.25;
+    private double shootCooldown = 1.75;
 
     double width = 45;
     double height = 45;
@@ -20,9 +20,6 @@ public class BouncePlane extends EnemyEntity implements HasCollision {
     private static Image downImg;
     private static Image upImg;
 
-//    static {
-//        img = new Image(SmallFighter.class.getResourceAsStream("xaki_down.png"));
-//    }
 
     public BouncePlane(GameScene gameScene, Point2D position) {
         super(gameScene, position, 25, 25);

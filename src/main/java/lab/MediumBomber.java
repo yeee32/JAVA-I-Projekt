@@ -7,16 +7,12 @@ import javafx.scene.paint.Color;
 
 public class MediumBomber extends EnemyEntity implements HasCollision {
     private double shootTimer = 0;
-    private double shootCooldown = 1.5; // seconds
+    private double shootCooldown = 2; // seconds
 
     double width = 70;
     double height = 70;
 
     private static Image img;
-
-//    static {
-//        img = new Image(SmallFighter.class.getResourceAsStream("blue_down.png"));
-//    }
 
     public MediumBomber(GameScene gameScene, Point2D position) {
         super(gameScene, position, 35, 35);

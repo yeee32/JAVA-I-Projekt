@@ -26,6 +26,8 @@ public class GameScene {
 
     private List<PowerUp> powerUps = new ArrayList<>();
 
+    private List<Explosion> explosions = new ArrayList<>();
+
     private Set<KeyCode> keysPressed;
 
     private Comparator<EnemyEntity> comparator;
@@ -33,24 +35,25 @@ public class GameScene {
     private EnemySpawner infEnemySpawner;
 
 
-    private Score scoreObj;
+    private ScoreText scoreObj;
     private PlayerLives livesObj;
     private final int pointsAmmount = 100;
     private final int padding = 50;
+
+    private boolean gameOver = false;
+
+    private static final double POWERUP_SPAWN_CHANCE = 0.1;
 
     public GameScene(double width, double height, Set<KeyCode> keysPressed) {
         size = new Dimension2D(width, height);
         this.keysPressed = keysPressed;
         double centerX = width / 2;
         double centerY = height / 2;
-        int enemyCount = 50;
         background = new Background(this);
         player = new Player(this, new Point2D(centerX, centerY));
         infEnemySpawner = new EnemySpawner(this);
-
-        spawnPowerUp(new Point2D(300,300));
-        spawnPowerUp(new Point2D(500,500));
-        scoreObj = new Score(this);
+        gameOver = false;
+        scoreObj = new ScoreText(this);
         livesObj = new PlayerLives(this);
         comparator = new Comparator<EnemyEntity>() {
             @Override
@@ -91,6 +94,10 @@ public class GameScene {
         }
         for (Bullet bullet : bullets) {
             bullet.draw(gc);
+        }
+
+        for (Explosion explosion : explosions) {
+            explosion.draw(gc);
         }
 
         for (PowerUp pu : powerUps) {
@@ -166,6 +173,13 @@ public class GameScene {
                 while (enemyIterator.hasNext()) {
                     EnemyEntity enemy = enemyIterator.next();
                     if (bullet.getHitbox().intersects(enemy.getHitbox())) {
+
+                        addExplosion(enemy.getPosition());
+
+                        if (RANDOM.nextDouble() < POWERUP_SPAWN_CHANCE) {
+                            spawnPowerUp(enemy.getPosition());
+                        }
+
                         enemyIterator.remove();
                         bulletIterator.remove();
                         scoreObj.addPoints(pointsAmmount);
@@ -178,7 +192,13 @@ public class GameScene {
             if (bullet instanceof EnemyBullet) {
                 if (bullet.getHitbox().intersects(player.getHitbox()) && !player.isInvincible()) {
                     bulletIterator.remove();
+                    if(livesObj.getLives() <= 1){
+                        gameOver = true;
+                        System.out.println("Game Over");
+                    }
                     livesObj.loseLife();
+                    player.takeDamage();
+                    player.disablePowerUp(powerUp);
                     break;
                 }
             }
@@ -187,9 +207,20 @@ public class GameScene {
         Iterator<PowerUp> powerUpIterator = powerUps.iterator();
         while (powerUpIterator.hasNext()) {
             PowerUp powerUp = powerUpIterator.next();
+            powerUp.simulate(delay);
             if (player.collidesWith(powerUp.getHitbox())) {
                 player.activatePowerUp(powerUp);
                 powerUpIterator.remove();
+            }
+        }
+
+        Iterator<Explosion> explosionIterator = explosions.iterator();
+        while (explosionIterator.hasNext()) {
+            Explosion explosion = explosionIterator.next();
+            explosion.simulate(delay);
+
+            if (explosion.isFinished()) {
+                explosionIterator.remove();
             }
         }
 
@@ -198,8 +229,14 @@ public class GameScene {
             EnemyEntity enemy = enemyIterator.next();
             enemy.simulate(delay);
             if (enemy.collidesWith(player.getHitbox()) && !player.isInvincible()) {
-                //System.out.println("enemy hit player");
+                if(livesObj.getLives() <= 1){
+                    gameOver = true;
+                    System.out.println("Game Over");
+                }
                 livesObj.loseLife();
+                player.takeDamage();
+                player.disablePowerUp(powerUp);
+                break;
             }
 
             if (enemy.getPosition().getY() < -padding * 3 || enemy.getPosition().getY() > size.getHeight() + padding || enemy.getPosition().getX() < -padding || enemy.getPosition().getX() > size.getWidth() + padding) {
@@ -220,7 +257,19 @@ public class GameScene {
         scoreObj.addPoints(points);
     }
 
+    public int getScore(){
+        return scoreObj.getScore();
+    }
+
     public Player getPlayer() {
         return player;
+    }
+
+    public void addExplosion(Point2D position) {
+        explosions.add(new Explosion(position));
+    }
+
+    public boolean isGameOver() {
+        return gameOver;
     }
 }
