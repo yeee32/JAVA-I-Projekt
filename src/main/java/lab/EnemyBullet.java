@@ -5,7 +5,7 @@ import javafx.scene.image.Image;
 import javafx.geometry.Point2D;
 
 public class EnemyBullet extends Bullet {
-    private static Image image;
+    private Image image;
 
     public EnemyBullet(Point2D position, Point2D velocity) {
         super(position, velocity);

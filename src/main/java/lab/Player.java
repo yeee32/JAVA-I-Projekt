@@ -13,7 +13,7 @@ public class Player implements HasCollision{
     private Canvas canvas;
     private Bullet bullet;
 
-    private static Image image;
+    private Image image;
 
     double width = 60;
     double height = 60;
@@ -32,8 +32,8 @@ public class Player implements HasCollision{
     private double invincibleCooldown = 4;
     private double invincibleCooldownTimer = 0;
 
-    private static Image defaultImage;
-    private static Image invincibleImage;
+    private Image defaultImage;
+    private Image invincibleImage;
 
     public Player(GameScene gameScene, Point2D position){
         this.gameScene = gameScene;
@@ -41,7 +41,7 @@ public class Player implements HasCollision{
         loadImages();
     }
 
-    private static void loadImages() {
+    private void loadImages() {
         if (defaultImage == null) {
             defaultImage = new Image(
                 Player.class.getResourceAsStream("player_plane.png")

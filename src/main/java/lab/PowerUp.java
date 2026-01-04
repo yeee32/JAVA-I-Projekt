@@ -15,8 +15,8 @@ public class PowerUp implements HasCollision{
     private Point2D position;
     double width = 30;
     double height = 30;
-    private static Image img;
-    private static int speed = 100;
+    private Image img;
+    private int speed = 100;
 
     PowerUp(GameScene gameScene, Point2D position) {
         this.gameScene = gameScene;
@@ -24,7 +24,7 @@ public class PowerUp implements HasCollision{
         img = getImg();
     }
 
-    Image getImg(){
+    private Image getImg(){
         if (img == null) {
             img = new Image(SmallFighter.class.getResourceAsStream("pow.png"));
         }

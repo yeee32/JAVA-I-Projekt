@@ -12,7 +12,7 @@ public class MediumBomber extends EnemyEntity implements HasCollision {
     double width = 70;
     double height = 70;
 
-    private static Image img;
+    private Image img;
 
     public MediumBomber(GameScene gameScene, Point2D position) {
         super(gameScene, position, 35, 35);
@@ -20,7 +20,7 @@ public class MediumBomber extends EnemyEntity implements HasCollision {
         img = getImg();
     }
 
-    Image getImg(){
+    private Image getImg(){
         if (img == null) {
             img = new Image(SmallFighter.class.getResourceAsStream("blue_down.png"));
         }

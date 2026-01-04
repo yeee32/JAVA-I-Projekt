@@ -14,7 +14,7 @@ public class Background {
         image = getImg();
     }
 
-    private static Image getImg() {
+    private Image getImg() {
         if (image == null) {
             image = new Image(Background.class.getResourceAsStream("bg_no_border.png"));
         }

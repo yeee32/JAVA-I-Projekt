@@ -10,14 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScoreManager {
-    private static final String FILE_NAME = "scores.csv";
-
     public static void saveScore(String name, int score) {
         if (name == null || name.isBlank()) {
             name = "Player";
         }
 
-        try (FileWriter fw = new FileWriter(FILE_NAME, true);
+        try (FileWriter fw = new FileWriter("scores.csv", true);
              BufferedWriter bw = new BufferedWriter(fw)) {
 
             bw.write(name + "," + score);
@@ -31,7 +29,7 @@ public class ScoreManager {
     public static List<Score> loadScores() throws ScoreException {
         List<Score> scores = new ArrayList<>();
 
-        File file = new File(FILE_NAME);
+        File file = new File("scores.csv");
         if (!file.exists()) {
             return scores;
         }

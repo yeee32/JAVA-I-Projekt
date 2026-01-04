@@ -15,7 +15,7 @@ public class SmallFighter extends EnemyEntity implements HasCollision{
     double width = 40;
     double height = 40;
 
-    private static Image img;
+    private Image img;
 
     public SmallFighter(GameScene gameScene, Point2D position) {
         super(gameScene, position, 25, 25);
@@ -24,7 +24,7 @@ public class SmallFighter extends EnemyEntity implements HasCollision{
         img = getImg();
     }
 
-    Image getImg(){
+    private Image getImg(){
         if (img == null) {
             img = new Image(SmallFighter.class.getResourceAsStream("white_down.png"));
         }

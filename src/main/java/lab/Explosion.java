@@ -17,7 +17,7 @@ public class Explosion {
         img = getImg();
     }
 
-    Image getImg(){
+    private Image getImg(){
         if (img == null) {
             img = new Image(SmallFighter.class.getResourceAsStream("exlposion.gif"));
         }

@@ -27,7 +27,7 @@ public class BouncePlane extends EnemyEntity implements HasCollision {
         loadImages();
     }
 
-    private static void loadImages() {
+    private void loadImages() {
         if (downImg == null) {
             downImg = new Image(
                 Player.class.getResourceAsStream("xaki_down.png")
