@@ -4,14 +4,21 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="700.0" prefWidth="768.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lab.GameOverController">
+<AnchorPane fx:id="gameOverMenu" prefHeight="700.0" prefWidth="768.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lab.GameOverController">
     <children>
-        <Button fx:id="restart_button" layoutX="319.0" layoutY="337.0" mnemonicParsing="false" onAction="#startGame" prefHeight="26.0" prefWidth="130.0" text="RESTART" />
-        <Button fx:id="quit_button" layoutX="315.0" layoutY="383.0" mnemonicParsing="false" onAction="#quitGame" prefHeight="26.0" prefWidth="138.0" text="QUIT GAME" />
-      <Button fx:id="main_menu_button" layoutX="319.0" layoutY="289.0" mnemonicParsing="false" onAction="#goToMainMenu" prefHeight="26.0" prefWidth="130.0" text="MENU" />
-      <TextField fx:id="input_text" layoutX="308.0" layoutY="242.0" />
-      <Label fx:id="score_text_label" layoutX="256.0" layoutY="197.0" text="Score" />
-      <Label fx:id="score_label" layoutX="301.0" layoutY="198.0" prefHeight="18.0" prefWidth="163.0" />
+        <Button fx:id="restart_button" layoutX="319.0" layoutY="433.0" mnemonicParsing="false" onAction="#startGame" prefHeight="26.0" prefWidth="130.0" text="RESTART" />
+        <Button fx:id="quit_button" layoutX="315.0" layoutY="479.0" mnemonicParsing="false" onAction="#quitGame" prefHeight="26.0" prefWidth="138.0" text="QUIT GAME" />
+      <Button fx:id="main_menu_button" layoutX="319.0" layoutY="385.0" mnemonicParsing="false" onAction="#goToMainMenu" prefHeight="26.0" prefWidth="130.0" text="MENU" />
+      <TextField fx:id="input_text" layoutX="308.0" layoutY="338.0" />
+      <Label fx:id="score_text_label" layoutX="245.0" layoutY="300.0" text="Score" textFill="WHITE">
+         <font>
+            <Font size="20.0" />
+         </font></Label>
+      <Label fx:id="score_label" layoutX="308.0" layoutY="300.0" prefHeight="18.0" prefWidth="163.0" textAlignment="CENTER" textFill="WHITE">
+         <font>
+            <Font size="20.0" />
+         </font></Label>
     </children>
 </AnchorPane>

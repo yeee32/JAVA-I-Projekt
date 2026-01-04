@@ -6,12 +6,12 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="700.0" prefWidth="768.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lab.ScoreBoardController">
+<AnchorPane prefHeight="700.0" prefWidth="768.0" style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lab.ScoreBoardController">
     <children>
         <Button fx:id="quit_button" layoutX="411.0" layoutY="577.0" mnemonicParsing="false" onAction="#quitGame" prefHeight="26.0" prefWidth="138.0" text="QUIT GAME" />
         <Button fx:id="main_menu_button" layoutX="206.0" layoutY="577.0" mnemonicParsing="false" onAction="#goToMainMenu" prefHeight="26.0" prefWidth="130.0" text="MENU" />
         <Label fx:id="score_label" layoutX="301.0" layoutY="198.0" prefHeight="18.0" prefWidth="163.0" />
-      <TableView fx:id="score_table" layoutX="243.0" layoutY="73.0" prefHeight="466.0" prefWidth="281.0">
+      <TableView fx:id="score_table" layoutX="243.0" layoutY="73.0" prefHeight="466.0" prefWidth="281.0" style="-fx-background-color: gray;">
         <columns>
           <TableColumn fx:id="name_collumn" prefWidth="141.5999755859375" text="NAME" />
           <TableColumn fx:id="score_collumn" prefWidth="139.20001220703125" text="SCORE" />

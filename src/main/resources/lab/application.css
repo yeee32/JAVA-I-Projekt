@@ -4,3 +4,9 @@
     -fx-background-size: cover;
     -fx-background-position: center;
 }
+
+#gameOverMenu {
+    -fx-background-image: url("gameOver.png");
+    -fx-background-size: cover;
+    -fx-background-position: center;
+}

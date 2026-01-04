@@ -104,6 +104,7 @@ public class App extends Application {
             controller.setScore(score);
 
             Scene scene = new Scene(root, w, h);
+            scene.getStylesheets().add(Objects.requireNonNull(cssUrl).toString());
             stage.setScene(scene);
             stage.setTitle("Game Over");
             stage.show();
