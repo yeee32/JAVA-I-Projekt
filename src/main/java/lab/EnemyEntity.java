@@ -9,7 +9,7 @@ import javafx.scene.paint.Color;
 import java.util.Random;
 
 
-public abstract class EnemyEntity implements HasCollision{
+public abstract class EnemyEntity implements HasCollision, DrawableSimulable {
     protected GameScene gameScene;
     protected Point2D position;
 
@@ -32,7 +32,7 @@ public abstract class EnemyEntity implements HasCollision{
         this.speedX = 0;   // default horizontal speed
     }
 
-
+    @Override
     public void draw(GraphicsContext gc) {
         gc.save();
         gc.setFill(c);
